@@ -1,0 +1,62 @@
+<html>
+<head>
+<title>evalSheet.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+.s3 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+evalSheet.py</font>
+</center></td></tr></table>
+<pre><span class="s0">from </span><span class="s1">pycoingecko </span><span class="s0">import </span><span class="s1">CoinGeckoAPI</span>
+<span class="s0">import </span><span class="s1">pygsheets</span>
+<span class="s0">import </span><span class="s1">json</span>
+<span class="s0">import </span><span class="s1">time</span>
+<span class="s1">cg = CoinGeckoAPI()</span>
+
+<span class="s1">service_file = </span><span class="s2">'credentials.json'</span>
+<span class="s1">gc = pygsheets.authorize(service_file=service_file)</span>
+<span class="s1">sheetname = </span><span class="s2">&quot;Cryptocurrency Investment Tracking&quot;</span>
+<span class="s1">sh = gc.open(sheetname)</span>
+
+<span class="s0">def </span><span class="s1">fillTokenEvalSheet(wks):</span>
+    <span class="s1">print(</span><span class="s2">&quot;Starting fillTokenEvalSheet&quot;</span><span class="s1">)</span>
+    <span class="s1">wks = sh.worksheet_by_title(wks)</span>
+    <span class="s1">wks.clear(</span><span class="s2">&quot;B2&quot;</span><span class="s0">, </span><span class="s2">&quot;F98&quot;</span><span class="s1">)</span>
+    <span class="s1">rawWKSData = json.dumps(wks.get_values(</span><span class="s2">&quot;A2&quot;</span><span class="s0">, </span><span class="s2">&quot;A1000&quot;</span><span class="s0">, </span><span class="s1">returnas=</span><span class="s2">&quot;matrix&quot;</span><span class="s0">, </span><span class="s1">include_tailing_empty=</span><span class="s2">&quot;false&quot;</span><span class="s1">))</span>
+    <span class="s1">cleanWKSData = str(json.loads(rawWKSData)).translate({ord(i): </span><span class="s0">None for </span><span class="s1">i </span><span class="s0">in </span><span class="s2">&quot;['']&quot;</span><span class="s1">})</span>
+    <span class="s1">cleanWKSData = cleanWKSData.replace(</span><span class="s2">&quot;, &quot;</span><span class="s0">, </span><span class="s2">&quot;,&quot;</span><span class="s1">)</span>
+    <span class="s1">cleanWKSData = cleanWKSData.replace(</span><span class="s2">&quot; &quot;</span><span class="s0">, </span><span class="s2">&quot;-&quot;</span><span class="s1">)</span>
+    <span class="s1">cleanWKSData = cleanWKSData.lower()</span>
+    <span class="s1">rawData = json.dumps(cg.get_coins_markets(vs_currency=</span><span class="s2">&quot;usd&quot;</span><span class="s0">, </span><span class="s1">ids=cleanWKSData))</span>
+    <span class="s1">cleanData = json.loads(rawData)</span>
+    <span class="s1">listWKSData = cleanWKSData.split(</span><span class="s2">&quot;,&quot;</span><span class="s1">)</span>
+    <span class="s1">y = </span><span class="s3">0</span>
+    <span class="s0">for </span><span class="s1">item </span><span class="s0">in </span><span class="s1">listWKSData:</span>
+        <span class="s1">tokenValue = cleanData[y][</span><span class="s2">&quot;current_price&quot;</span><span class="s1">]</span>
+        <span class="s1">tokenMC = cleanData[y][</span><span class="s2">&quot;market_cap&quot;</span><span class="s1">]</span>
+        <span class="s1">tokenCirculatingSupply = cleanData[y][</span><span class="s2">&quot;circulating_supply&quot;</span><span class="s1">]</span>
+        <span class="s1">tokenMaxSupply = cleanData[y][</span><span class="s2">&quot;total_supply&quot;</span><span class="s1">]</span>
+        <span class="s1">tokenFDV = cleanData[y][</span><span class="s2">&quot;fully_diluted_valuation&quot;</span><span class="s1">]</span>
+        <span class="s1">wks.update_value(</span><span class="s2">&quot;B&quot; </span><span class="s1">+ str(y + </span><span class="s3">2</span><span class="s1">)</span><span class="s0">, </span><span class="s1">tokenValue)</span>
+        <span class="s1">wks.update_value(</span><span class="s2">&quot;C&quot; </span><span class="s1">+ str(y + </span><span class="s3">2</span><span class="s1">)</span><span class="s0">, </span><span class="s1">tokenMC)</span>
+        <span class="s1">wks.update_value(</span><span class="s2">&quot;D&quot; </span><span class="s1">+ str(y + </span><span class="s3">2</span><span class="s1">)</span><span class="s0">, </span><span class="s1">tokenCirculatingSupply)</span>
+        <span class="s1">wks.update_value(</span><span class="s2">&quot;E&quot; </span><span class="s1">+ str(y + </span><span class="s3">2</span><span class="s1">)</span><span class="s0">, </span><span class="s1">tokenMaxSupply)</span>
+        <span class="s1">wks.update_value(</span><span class="s2">&quot;F&quot; </span><span class="s1">+ str(y + </span><span class="s3">2</span><span class="s1">)</span><span class="s0">, </span><span class="s1">tokenFDV)</span>
+        <span class="s1">print(</span><span class="s2">&quot;Filled values for &quot; </span><span class="s1">+ listWKSData[y] + </span><span class="s2">&quot;[EVALUATIONS]&quot;</span><span class="s1">)</span>
+        <span class="s1">y = y + </span><span class="s3">1</span>
+        <span class="s1">time.sleep(</span><span class="s3">5</span><span class="s1">)</span>
+        <span class="s0">continue</span>
+    <span class="s1">print(</span><span class="s2">&quot;Finished fillTokenEvalSheet&quot;</span><span class="s1">)</span>
+    <span class="s0">return</span>
+
+</pre>
+</body>
+</html>

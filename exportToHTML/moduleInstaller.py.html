@@ -1,0 +1,30 @@
+<html>
+<head>
+<title>moduleInstaller.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+.s3 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+moduleInstaller.py</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">sys</span><span class="s0">, </span><span class="s1">subprocess</span>
+
+<span class="s0">def </span><span class="s1">install(package):</span>
+    <span class="s1">reqs = subprocess.check_output([sys.executable</span><span class="s0">, </span><span class="s2">&quot;-m&quot;</span><span class="s0">, </span><span class="s2">&quot;pip&quot;</span><span class="s0">, </span><span class="s2">&quot;freeze&quot;</span><span class="s1">])</span>
+    <span class="s1">installed_packages = [r.decode().split(</span><span class="s2">&quot;==&quot;</span><span class="s1">)[</span><span class="s3">0</span><span class="s1">] </span><span class="s0">for </span><span class="s1">r </span><span class="s0">in </span><span class="s1">reqs.split()]</span>
+    <span class="s0">if </span><span class="s1">package </span><span class="s0">in </span><span class="s1">installed_packages:</span>
+        <span class="s1">print(package + </span><span class="s2">&quot; has already been installed.&quot;</span><span class="s1">)</span>
+    <span class="s0">else</span><span class="s1">:</span>
+        <span class="s1">subprocess.check_call([sys.executable</span><span class="s0">, </span><span class="s2">&quot;-m&quot;</span><span class="s0">, </span><span class="s2">&quot;pip&quot;</span><span class="s0">, </span><span class="s2">&quot;install&quot;</span><span class="s0">, </span><span class="s1">package])</span>
+        <span class="s1">print(package + </span><span class="s2">&quot; was installed.&quot;</span><span class="s1">)</span>
+    <span class="s0">return</span></pre>
+</body>
+</html>

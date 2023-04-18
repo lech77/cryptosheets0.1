@@ -1,0 +1,30 @@
+<html>
+<head>
+<title>topPerformers.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+topPerformers.py</font>
+</center></td></tr></table>
+<pre><span class="s0">from </span><span class="s1">pycoingecko </span><span class="s0">import </span><span class="s1">CoinGeckoAPI</span>
+<span class="s0">import </span><span class="s1">pygsheets</span>
+<span class="s0">import </span><span class="s1">json</span>
+<span class="s1">cg = CoinGeckoAPI()</span>
+
+<span class="s1">service_file = </span><span class="s2">'credentials.json'</span>
+<span class="s1">gc = pygsheets.authorize(service_file=service_file)</span>
+<span class="s1">sheetname = </span><span class="s2">&quot;Cryptocurrency Investment Tracking&quot;</span>
+<span class="s1">sh = gc.open(sheetname)</span>
+<span class="s1">wks = sh.worksheet_by_title(</span><span class="s2">&quot;Top Performers&quot;</span><span class="s1">)</span>
+
+</pre>
+</body>
+</html>
