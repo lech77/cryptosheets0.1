@@ -1,8 +1,6 @@
-import valueSheet, portfolioSheet, evalSheet, moduleInstaller, requests, time
+import valueSheet, portfolioSheet, evalSheet, requests, time
 
 def main():
-    moduleInstaller.install("pycoingecko")
-    moduleInstaller.install("pygsheets")
     while True:
         if requests.get("https://api.coingecko.com/api/v3/ping").status_code == 200:
             print("CoinGeckoAPI is working")
